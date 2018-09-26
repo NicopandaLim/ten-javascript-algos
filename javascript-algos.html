@@ -1,0 +1,319 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.min.js"></script>
+<h3>
+    Messages App
+    <button onclick="clearMessages()" class="button">
+        Clear Messages
+    </button>
+</h3>
+<div>
+    <!-- DONE: ADD AN ATTRIBUTE THAT focuses the CURSOR INTO THE TEXTAREA ELEMENT WHEN THE PAGE LOADS -->  
+    <textarea 
+        autofocus
+        rows=6 
+        cols=55 
+        id="inputText" 
+        type="text"
+        style="margin-bottom: 15px;"> 
+    </textarea>
+    <button onclick="searchNames()" class="button1">
+        Enter
+    </button>
+</div>
+
+<script>
+    function initUsersNames() {
+        var rootDiv = document.createElement('div');
+        rootDiv.id = 'listContainer';
+        var userNamesContainer = document.createElement('div');
+        userNames.forEach( function(userName, index) {
+            var childDiv = document.createElement('div');
+            var text = document.createTextNode(index.toString().concat(' .) ').concat(`${userName.firstName} ${userName.lastName}`));
+            childDiv.appendChild(text);
+            userNamesContainer.appendChild(childDiv);
+        });
+        rootDiv.appendChild(userNamesContainer);
+        document.body.appendChild(rootDiv);
+    }
+
+    function clearNames() {
+        var rootDiv = document.getElementById('listContainer');
+        if (rootDiv) {
+            while (rootDiv.hasChildNodes()) {
+                rootDiv.removeChild(rootDiv.lastChild);
+            }
+        }
+    }
+
+    function initDocument() {
+        clearNames();
+        initUsersNames();
+        initMessages();
+    }
+
+    function initMessages() {
+        var rootDiv = document.createElement('div');
+        var messagesContainer = document.createElement('div');
+        messagesContainer.id = 'messagesContainer';
+        messagesContainer.style['float'] = 'left';        // 
+        document.body.appendChild(messagesContainer);
+    }
+
+    function clearMessages() {
+        // DONE: CLEAR MESSAGES FROM DOCUMENT WHEN USER CLICKS THE [CLEAR MESSAGES] BUTTON
+        // DONE: INCLUDE A SCRIPT TAG THATS FETCHES BOOTSTRAP CSS STLYINGS AND STYLE THE BUTTONS(AT THE END OF FILE)
+        var messagesContainer = document.getElementById('messagesContainer');
+        if (messagesContainer) {
+            while (messagesContainer.hasChildNodes()) {
+                messagesContainer.removeChild(messagesContainer.lastChild);
+            }
+        }
+
+    }
+
+    function addPlainMessage() {
+        const userText = getUserText();    
+        var messagesContainer = document.getElementById('messagesContainer');
+        var messageDiv = document.createElement('p');
+        const text = document.createTextNode(userText);
+        messageDiv.appendChild(text);
+        messagesContainer.appendChild(messageDiv);
+        clearUserInput();
+    }
+
+    function addHandleMessage(handle) {
+        var messagesContainer = document.getElementById('messagesContainer');
+        var messageDiv = document.createElement('p');
+        var handleSpan = document.createElement('span');
+        handleSpan.style['color'] = 'dodgerblue';
+        handleText = document.createTextNode(handle);
+        handleSpan.appendChild(handleText);
+        
+        // DONE: EXCLUDING THE ORIGINALLY TYPED USER NAME REPLACE THE TEXT \
+        //        WITH ADDITIONAL USER TEXT FROM THE ORIGIN USER TEXT MESSAGE
+        var pos = getUserText().indexOf(" ");
+        var dummyText = getUserText().slice(pos);
+        var messageText = document.createTextNode(`${dummyText} `);
+        messageDiv.appendChild(handleSpan);
+        messageDiv.appendChild(messageText);
+        messagesContainer.appendChild(messageDiv);
+
+        clearFilteredNames();
+        clearUserInput();
+    }
+    
+    const instructionsFlag = false;
+    if (instructionsFlag) {
+        console.log(`README`);
+        console.log(`
+            SETUP ->
+            1. INSTALL LODASH USING NPM AND SAVE THE DEPENDENCY TO YOUR PACKAGE.JSON FILE
+    
+            2. IMPORT LODASH INTO THE INDEX.JS FILE.
+    
+            3. COMPLETE ALL TODOS
+        `);
+    }
+
+    const userMessages = [];
+
+    const debounce = (func, delay) => {         // This function to do restriction to look up time
+        let inDebounce
+        return function() {
+            const context = this
+            const args = arguments
+            clearTimeout(inDebounce)
+            inDebounce = setTimeout(() => func.apply(context, args), delay)
+        }
+    }
+
+    function initConstantTimeNameFileter() {
+        /* EXTRA CREDIT */
+
+    }
+    function constantTimeNameFilter(userText) {
+        /* EXTRA CREDIT :: CONVERT filterNames FUNCTION TO DO CONSTANT TIME LOOK UP.  
+        THIS WILL REQUIRE initConstantTimeNameFileter ON PAGE LOAD AS WELL */
+    }
+
+    function filterNames(userText) {
+        const firstThreeChars = userText.toLowerCase().slice(1,4);
+        var re = new RegExp(firstThreeChars, 'g');                    
+        console.log(`First three characters: ${firstThreeChars} `);
+        console.log(`First three characters: ${firstThreeChars} `);
+        const filteredNames = [];
+        userNames.forEach( (userName) => {
+            const fullname = `${userName.firstName.toLowerCase()} ${userName.lastName.toLowerCase()}`;
+            var isMatch = !!userName.firstName.toLowerCase().match(re) || !!userName.lastName.toLowerCase().match(re);
+            console.log(`Fullname: ${fullname}` );
+            console.log(isMatch);
+            console.log(`Fullname: ${fullname}` );
+            if (isMatch) {
+                filteredNames.push(userName);
+            }
+        });
+        return filteredNames;
+    }
+
+    function initFilteredNames(filteredNames) {
+        clearNames();
+        var rootDiv = document.createElement('div');
+        rootDiv.id = 'filteredNamesContainer';
+        var namesContainer = document.createElement('div');
+        filteredNames.forEach( (name) => {
+            var nameElm = document.createElement('button');
+            nameElm.style['background-color'] = 'dodgerblue';
+            nameElm.style['cursor'] = 'pointer';
+            nameElm.setAttribute('class', 'filtered-name');
+            var text = document.createTextNode(`${name.firstName} ${name.lastName}`);
+            nameElm.appendChild(text);
+            namesContainer.appendChild(nameElm);
+            
+            /* 
+                DONE: ADD CLICK EVENT LISTENER [addEventListener] TO EACH NAME ELEMENT.
+                IF THE USER CLICKS ON A FILTERED NAME THEN THEN A MESSAGE IS OUTPUT
+                USING THE ADD MESSAGE FUNCTION THAT REPLACES THE USER name WITH THE USER HANDLE.
+            */
+
+            nameElm.addEventListener("click", function() {
+                userNames.forEach( (userName) =>{
+                    if (name.firstName == userName.firstName && name.lastName == userName.lastName){
+                        addHandleMessage(userName.handle); 
+                    }
+                });
+            });
+        });
+        document.body.appendChild(namesContainer);
+    }
+
+    function clearUserInput() {
+        document.getElementById('inputText').value = '';
+    }
+
+    function clearFilteredNames() {
+        const filteredNames = document.getElementsByClassName('filtered-name');
+        Array.from(filteredNames).forEach( (filteredName) => {
+            filteredName.remove();
+        });        
+        
+    }
+
+    function getUserText() {
+        return document.getElementById('inputText').value.trim();
+    }
+
+    function searchNames() {
+        const userText = getUserText();
+        console.log('Search names ...');
+        console.log(userText);
+        console.log('Search names ...');
+
+        const firstChar = userText[0] || '';
+        if (firstChar === '@') {
+            console.log('filter names ...');
+            const filteredNames = filterNames(userText);
+            initFilteredNames(filteredNames);
+        } else {
+            console.log('MISSING @ IN USER TEXT');
+        }
+    }
+    // TODO UPDATE THE DEBOUNCE DELAY TO MORE CLOSELY RESEMBLE USER TYPING
+    document.addEventListener("DOMContentLoaded", function(event) {
+        document.getElementById('inputText').addEventListener(
+            'input',
+            debounce(
+                searchNames,
+                10000
+            )
+        );
+        initDocument();
+    });
+
+    
+    // DONE: TWELVE OBJECTS TOTALLY   
+       const userNames = [
+        {
+            firstName: 'Chandler',
+            lastName: 'Gegg',
+            handle: '@CGegg'
+        },
+        {
+            firstName: 'Phil',
+            lastName: 'Mickelson',
+            handle: '@PMickelson'
+        },
+        {
+            firstName: 'Grace',
+            lastName: 'Hopper',
+            handle: '@GHopper'
+        },
+        {
+            firstName: 'Horace',
+            lastName: 'Grant',
+            handle: '@HGrant'
+        },
+        {
+            firstName: 'Shawn',
+            lastName: 'Lim',
+            handle: '@SLim'
+        },
+        {
+            firstName: 'Gary',
+            lastName: 'Mar',
+            handle: '@GMar'
+        },
+        {
+            firstName: 'Caroline',
+            lastName: 'Cao',
+            handle: '@CCao'
+        },
+        {
+            firstName: 'Maxine',
+            lastName: 'He',
+            handle: '@MHe'
+        },
+        {
+            firstName: 'Lily',
+            lastName: 'Tao',
+            handle: '@LTao'
+        },
+        {
+            firstName: 'Rachel',
+            lastName: 'Green',
+            handle: '@RGreen'
+        },
+        {
+            firstName: 'Eliza',
+            lastName: 'Yang',
+            handle: '@EYang'
+        },
+        {
+            firstName: 'Max',
+            lastName: 'Deng',
+            handle: '@MDeng'
+        }
+    ];
+    
+</script>
+
+<style>
+    .filtered-name {
+        border-radius: 5px;
+        height: 23px;
+        line-height: 18px;
+    }
+    .button {
+        color: white;
+        background-color:cornflowerblue;
+        border-radius: 8px;
+        opacity: 0.6
+    }
+    .button:hover {opacity: 1}
+    .button1 {
+        color:black;
+        background-color:rosybrown;
+        border-radius: 32px;
+        width: 80px;
+        opacity: 0.6
+    }
+    .button1:hover {opacity: 1}
+</style>
