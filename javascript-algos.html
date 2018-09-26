@@ -182,8 +182,9 @@
     }
 
     const userMessages = [];
-
-    const debounce = (func, delay) => {         // This function to do restriction to look up time
+    
+    //SET TIMEOUT FOR RESEMBLE USER TYPING
+    const debounce = (func, delay) => {         
         let inDebounce
         return function() {
             const context = this
